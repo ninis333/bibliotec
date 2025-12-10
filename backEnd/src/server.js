@@ -9,6 +9,7 @@
   import favoritosRoutes from "./routes/favoritos.routes.js"
   import loginRoutes from "./routes/login.routes.js"
   import reservaRoutes from "./routes/reserva.routes.js"
+  import verificacaoRoute from "./routes/verificacao.routes.js";
 
   // ============================
   //  Configuração do servidor
@@ -26,6 +27,7 @@
   app.use("/favoritos", favoritosRoutes)
   app.use("/login", loginRoutes)
   app.use("/reserva",reservaRoutes)
+  app.use("/verificacao", verificacaoRoute);
 
   // ============================
   //  Inicia o servidor

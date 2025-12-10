@@ -277,6 +277,10 @@ h1 {
     color: white;
 }
 
+.botaoReservar.reservado{
+    background-color: #2fd6cb ;
+}
+
 .estrelaVazia{
     width: 35px;
     height : 35px;
@@ -416,6 +420,21 @@ body.dark {
     cursor: pointer;
     transition: transform 1.5s ease;
     text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+
+.reservados{
+    margin-top: 4%;
+    margin-left: 4%;
+    transition: transform 1.5s ease;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    
+}
+
+.reserv{
+    text-decoration: none;
+    color: black;
+    
 }
 
 .divTermosEPrivacidade{

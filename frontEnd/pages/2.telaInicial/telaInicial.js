@@ -10,6 +10,8 @@ const APIDesreservar = `http://localhost:3000/reserva/desreservar`
 const APIDesfavoritar = "http://localhost:3000/favoritos/desfavoritar";
 const idAluno = localStorage.getItem("id");
 const APIListFavoritos = `http://localhost:3000/favoritos/${idAluno}`;
+
+const APIListReservados = `http://localhost:3000/reserva/${idAluno}`;
 const aluno = JSON.parse(localStorage.getItem("aluno"));
 divNomePessoa.textContent = aluno.nome;
 
@@ -161,11 +163,11 @@ document.addEventListener("click", async (e) => {
         if (metodo === "POST") {
             e.target.src = "../../img/coracaoCheio.png";
             e.target.classList.add("favoritado");
-            
+
         } else {
             e.target.src = "../../img/coracaoVazio.png";
             e.target.classList.remove("favoritado");
-            
+
         }
 
     } catch (error) {
@@ -184,6 +186,10 @@ document.addEventListener("click", async (e) => {
         const favoritos = await favoritosResponse.json();
         const jaFavoritado = favoritos.some(f => f.livro_id == livroId);
 
+        const reservadosResponse = await fetch(APIListReservados);
+        const reservados = await reservadosResponse.json();
+        const jaReservado = reservados.some(r => r.livro_id == livroId);
+
         descricaoLivro.innerHTML = `
             <h3 class="h3Descricao">${e.target.alt}</h3>
             <div class="descricao">
@@ -199,7 +205,7 @@ document.addEventListener("click", async (e) => {
                 <img class="estrelaVazia" src="../../../frontEnd/img/estrelaVazia.png" alt="">
                 </div>
                 <div class="osdois">
-                <button type="button" class="botaoReservar" id="btnReserva-${livroId}">Reservar livro</button>
+                <button type="button" class="${jaReservado ? 'botaoReservar reservado' : 'botaoReservar'}" id="btnReserva-${livroId}">${jaReservado ? 'livro reservado' : 'Reservar livro'}</button>
                 <img 
     class="coracao ${jaFavoritado ? "favoritado" : ""}"
     id="coracoFav-${livroId}"
@@ -216,7 +222,7 @@ document.addEventListener("click", async (e) => {
 
     // Se clicar fora → fecha
     if (!descricaoLivro.contains(e.target)) {
-        
+
         descricaoLivro.classList.remove("ativa");
     }
 });
@@ -227,11 +233,11 @@ document.addEventListener("click", async (e) => {
     const idBtn = e.target.id;
     const livroId = idBtn.split("-")[1];
 
-    const jaReservado = e.target.classList.contains("favoritado");
+    const jaReservado = e.target.classList.contains("reservado");
 
     const url = jaReservado ? APIDesreservar : APIReservar;
     const metodo = jaReservado ? "DELETE" : "POST";
-    
+
     try {
         const requisicao = await fetch(url, {
             method: metodo,
@@ -248,20 +254,19 @@ document.addEventListener("click", async (e) => {
         }
 
         if (metodo === "POST") {
-            e.target.src = "../../img/coracaoCheio.png";
-            e.target.classList.add("favoritado");
-            
+            e.target.textContent = 'livro reservado'
+            e.target.classList.add('reservado')
+
         } else {
-            e.target.src = "../../img/coracaoVazio.png";
-            e.target.classList.remove("favoritado");
-            
+            e.target.textContent = 'Reservar livro'
+            e.target.classList.remove("reservado");
         }
 
     } catch (error) {
         console.error(error);
         alert("Erro de conexão com servidor.");
     }
-    
+
 })
 // Abrir ao clicar no livro
 // livros.forEach(livro => {
