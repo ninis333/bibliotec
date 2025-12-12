@@ -1,9 +1,18 @@
-const params = new URLSearchParams(window.location.search);
-const email = params.get('email');
+// Agora o email vem do localStorage, não da URL 👇
+const email = localStorage.getItem("email_recuperacao");
+
 const APIVerificarCodigo = "http://localhost:3000/verificacao/verificar";
 const inputs = document.querySelectorAll(".codigo");
 const btnVerificar = document.getElementById('btnVerificar');
 
+// Configuração do Toast
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+});
 
 // Eventos de navegação entre inputs
 inputs.forEach((input, index) => {
@@ -24,27 +33,6 @@ inputs.forEach((input, index) => {
 
 });
 
-// Evento do botão (fora do forEach!)
-btnVerificar.addEventListener('click', async () => {
-    let codigoDigitado = "";
-
-    inputs.forEach(input => {
-        codigoDigitado += input.value;
-    });
-
-    const sucesso = await verificarCodigo(email, codigoDigitado);
-    if (sucesso) {
-      // Redireciona para a página de redefinição de senha após verificar o código
-      window.location.href = `../3.redefinirSenha/redifinirSenha.html?email=${encodeURIComponent(email)}`;
-    } else {
-        alert( "Por favor, insira o código de verificação correto.")
-    }
-});
-
-
-
-
-
 async function verificarCodigo(email, codigo) {
   try {
     const resposta = await fetch(APIVerificarCodigo, {
@@ -54,33 +42,54 @@ async function verificarCodigo(email, codigo) {
       },
       body: JSON.stringify({ email, codigo }),
     });
+
     const dados = await resposta.json();
+
     if (!resposta.ok) {
-      throw new Error(dados.erro || "Erro ao verificar código.");
+      Toast.fire({
+        icon: "error",
+        title: dados.erro || "Erro ao verificar código.",
+      });
+      return false;
     }
-    alert(`Sucesso: ${dados.mensagem}`)
-    ;
+
+    Toast.fire({
+      icon: "success",
+      title: dados.mensagem || "Código verificado!",
+    });
+
+    // salva somente o ID
+    localStorage.setItem("aluno_id", dados.aluno_id);
+
     return true;
+
   } catch (erro) {
-    alert(`Erro: ${erro.message}`);
- 
+    Toast.fire({
+      icon: "error",
+      title: `Erro: ${erro.message}`,
+    });
     return false;
   }
 }
 
-// btnVerificarCodigo.addEventListener("click", async (e) => {
-//     e.preventDefault();
-//     const codigo = inputCodigo.value.trim();
-//     if (codigo === "") {
-//       Toast.fire({
-//         icon: "warning",
-//         title: "Por favor, insira o código de verificação.",
-//       });
-//       return;
-//     }
-//     const sucesso = await verificarCodigo(email, codigo);
-//     if (sucesso) {
-//       // Redireciona para a página de redefinição de senha após verificar o código
-//         window.location.href = `../redefinir-senha/redefinir-senha.html?email=${encodeURIComponent(email)}`;
-//     }
-// });
+// Evento do botão
+btnVerificar.addEventListener('click', async () => {
+
+    let codigoDigitado = "";
+
+    inputs.forEach(input => {
+        codigoDigitado += input.value;
+    });
+
+    const sucesso = await verificarCodigo(email, codigoDigitado);
+
+    if (sucesso) {
+        window.location.href = `../3.redefinirSenha/redefinirSenha.html`;
+
+    } else {
+        Toast.fire({
+            icon: "warning",
+            title: "Por favor, insira o código de verificação correto.",
+        });
+    }
+});

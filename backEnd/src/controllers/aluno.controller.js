@@ -12,11 +12,11 @@ export async function criarAluno(req, res) {
     if (!nome || !cpf || !email || !curso_id || !turma_id || !senha)
       return res.status(400).json({ erro: "Campos obrigatórios" });
 
-    console.log("📦 Dados recebidos:", {  nome, cpf, email, curso_id, turma_id, senha });
+    console.log("📦 Dados recebidos:", {  nome, cpf, email, curso_id, senha });
 
       const [resultado] = await db.execute(
-      "INSERT INTO tabela_usuario (nome, cpf, email, curso_id, turma_id) VALUES (?, ?, ?, ?, ?)",
-      [nome, cpf, email, curso_id, turma_id],
+      "INSERT INTO tabela_usuario (nome, cpf, email, curso_id) VALUES (?, ?, ?, ? )",
+      [nome, cpf, email, curso_id],
     );
 
     const aluno_id = resultado.insertId;

@@ -1,3 +1,11 @@
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+});
+
 const APILivro = "http://localhost:3000/livros"
 
 const id = window.localStorage.getItem(`id`)
@@ -15,16 +23,17 @@ async function buscarAlunosFav() {
 
         const dados = await response.json();
         console.log('Livros recebidos:', dados);
-        return dados; // retorna os dados para serem usados depois
+        return dados;
 
     } catch (error) {
         console.error('Erro ao buscar Livros:', error);
+        Toast.fire({ icon: "error", title: "Erro ao carregar favoritos!" });
         return null;
     }
 }
 
 async function carregarLivrosFavoritos() {
-    // const livros = await buscarLivros();
+
     const alunosFav = await buscarAlunosFav();
     const divApenasManga = document.createElement('div')
     divApenasManga.classList.add('apenasMangas');
@@ -42,18 +51,17 @@ async function carregarLivrosFavoritos() {
                     src="../../img/coracaoCheio.png" 
                     id="coracoFav-${livro.livro_id}"
                 >
-            </h2>`;
+            </h3>`;
 
         exibirLivros.appendChild(divCard)
-
-
     })
-    divApenasManga.appendChild(divCard)
+
     exibirLivros.appendChild(divApenasManga)
 }
 
 carregarLivrosFavoritos();
 
+// DESFAVORITAR
 document.addEventListener("click", async (e) => {
     if (!e.target.classList.contains("coracaoFav2")) return;
 
@@ -62,7 +70,7 @@ document.addEventListener("click", async (e) => {
 
     try {
         const requisicao = await fetch(APIDesfavoritar, {
-            method: "delete",
+            method: "DELETE",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 aluno_id: id,
@@ -71,18 +79,20 @@ document.addEventListener("click", async (e) => {
         });
 
         if (!requisicao.ok) {
-            alert("Erro no servidor. Código: " + requisicao.status);
+            Toast.fire({ icon: "error", title: "Erro no servidor!" });
             return;
         }
 
-        window.location.reload()
+        Toast.fire({ icon: "success", title: "Livro removido dos favoritos!" });
+        setTimeout(() => window.location.reload(), 600);
 
     } catch (error) {
         console.error(error);
-        alert("Erro de conexão com servidor.");
+        Toast.fire({ icon: "error", title: "Erro de conexão!" });
     }
 });
 
+// DESCRIÇÃO DO LIVRO
 const descricaoLivro2 = document.getElementById('descricaoLivro');
 document.addEventListener("click", (e) => {
     if (e.target.classList.contains("livro")) {
@@ -97,7 +107,6 @@ document.addEventListener("click", (e) => {
         return;
     }
 
-    // Se clicar fora → fecha
     if (!descricaoLivro.contains(e.target)) {
         descricaoLivro.classList.remove("ativa");
     }

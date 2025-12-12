@@ -1,3 +1,11 @@
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+});
+
 const APILivros = "http://localhost:3000/livros"
 const campoPesquisa = document.querySelector('.inputCampo');
 const conteiner = document.querySelector('.conteiner')
@@ -24,22 +32,21 @@ async function buscarDadosDoBanco() {
 
         const dados = await response.json();
         console.log('Dados recebidos:', dados);
-        return dados; // retorna os dados para serem usados depois
+        return dados;
 
     } catch (error) {
         console.error('Erro ao buscar dados:', error);
+        Toast.fire({ icon: "error", title: "Erro ao carregar livros!" });
         return null;
     }
 }
 
 function montarCategoria(titulo, genero, dados, favoritos) {
 
-    // --- H1 ---
     const h1 = document.createElement("h1");
     h1.id = `h1${titulo}`;
     h1.textContent = titulo;
 
-    // --- Containers principais ---
     const fadeUp = document.createElement("div");
     fadeUp.classList.add("fade-up");
 
@@ -51,7 +58,6 @@ function montarCategoria(titulo, genero, dados, favoritos) {
 
     exibir.appendChild(apenasLivros);
 
-    // --- Controls ---
     const controls = document.createElement("div");
     controls.classList.add(`controls${titulo}`);
 
@@ -63,11 +69,9 @@ function montarCategoria(titulo, genero, dados, favoritos) {
     fadeUp.appendChild(exibir);
     fadeUp.appendChild(controls);
 
-    // --- Adiciona tudo no container principal ---
     conteiner.appendChild(h1);
     conteiner.appendChild(fadeUp);
 
-    // --- Criar os cards dessa categoria ---
     dados.forEach(livro => {
         if (livro.genero !== genero) return;
 
@@ -135,6 +139,7 @@ carregarLivros().then(() => {
     configurarCarrossel("Terror");
 });
 
+// FAVORITAR
 document.addEventListener("click", async (e) => {
     if (!e.target.classList.contains("coracao")) return;
 
@@ -156,32 +161,33 @@ document.addEventListener("click", async (e) => {
         });
 
         if (!requisicao.ok) {
-            alert("Erro no servidor. Código: " + requisicao.status);
+            Toast.fire({ icon: "error", title: "Erro no servidor!" });
             return;
         }
 
         if (metodo === "POST") {
             e.target.src = "../../img/coracaoCheio.png";
             e.target.classList.add("favoritado");
+            Toast.fire({ icon: "success", title: "Livro favoritado!" });
 
         } else {
             e.target.src = "../../img/coracaoVazio.png";
             e.target.classList.remove("favoritado");
-
+            Toast.fire({ icon: "success", title: "Livro desfavoritado!" });
         }
 
     } catch (error) {
         console.error(error);
-        alert("Erro de conexão com servidor.");
+        Toast.fire({ icon: "error", title: "Erro de conexão!" });
     }
 });
 
+// DESCRIÇÃO DO LIVRO
 const descricaoLivro2 = document.getElementById('descricaoLivro');
 document.addEventListener("click", async (e) => {
     if (e.target.classList.contains("livro")) {
         const livroId = e.target.id.split("-")[1];
 
-        // buscar favoritos atualizados
         const favoritosResponse = await fetch(APIListFavoritos);
         const favoritos = await favoritosResponse.json();
         const jaFavoritado = favoritos.some(f => f.livro_id == livroId);
@@ -207,26 +213,24 @@ document.addEventListener("click", async (e) => {
                 <div class="osdois">
                 <button type="button" class="${jaReservado ? 'botaoReservar reservado' : 'botaoReservar'}" id="btnReserva-${livroId}">${jaReservado ? 'livro reservado' : 'Reservar livro'}</button>
                 <img 
-    class="coracao ${jaFavoritado ? "favoritado" : ""}"
-    id="coracoFav-${livroId}"
-    src="${jaFavoritado ? '../../img/coracaoCheio.png' : '../../img/coracaoVazio.png'}"
->
+                    class="coracao ${jaFavoritado ? "favoritado" : ""}"
+                    id="coracoFav-${livroId}"
+                    src="${jaFavoritado ? '../../img/coracaoCheio.png' : '../../img/coracaoVazio.png'}"
+                >
                 </div>
                 </div>
         `
         descricaoLivro.classList.add("ativa");
 
         return;
-
     }
 
-    // Se clicar fora → fecha
     if (!descricaoLivro.contains(e.target)) {
-
         descricaoLivro.classList.remove("ativa");
     }
 });
 
+// RESERVAR LIVRO
 document.addEventListener("click", async (e) => {
     if (!e.target.classList.contains("botaoReservar")) return;
 
@@ -249,48 +253,34 @@ document.addEventListener("click", async (e) => {
         });
 
         if (!requisicao.ok) {
-            alert("Erro no servidor. Código: " + requisicao.status);
+            Toast.fire({ icon: "error", title: "Erro no servidor!" });
             return;
         }
 
         if (metodo === "POST") {
             e.target.textContent = 'livro reservado'
             e.target.classList.add('reservado')
+            Toast.fire({ icon: "success", title: "Livro reservado!" });
 
         } else {
             e.target.textContent = 'Reservar livro'
             e.target.classList.remove("reservado");
+            Toast.fire({ icon: "success", title: "Reserva cancelada!" });
         }
 
     } catch (error) {
         console.error(error);
-        alert("Erro de conexão com servidor.");
+        Toast.fire({ icon: "error", title: "Erro de conexão!" });
     }
 
-})
-// Abrir ao clicar no livro
-// livros.forEach(livro => {
-//     livro.addEventListener('click', (e) => {
-//         e.stopPropagation();
-//         const valor = livro.getAttribute("data-descricao")
-//         descricaoLivro2.innerHTML = `
-//             <h3 class="h3Descricao">${livro.alt}</h3>
-//             <div class="descricao">
-//             <img class="imgDescricao" src="${livro.src}">
-//             <p class="pDescricaoLivro">${valor}</p>
-//             <div>
-//         `;
-//         descricaoLivro2.classList.add('ativa');
-//     });
-// });
+});
 
-// POP UP
+// POP UP FILTRO
 const filtro = document.getElementById('filtro')
 const popUpFiltro = document.getElementById('pop-up-filtro')
 const filtroPop = document.getElementById('filtro-pop')
 
 filtro.addEventListener('click', () => {
-
     popUpFiltro.classList.add('show');
 })
 
@@ -300,11 +290,7 @@ popUpFiltro.addEventListener('click', (evento) => {
     }
 })
 
-
-
-// carousel 
-
-
+// DARK MODE
 const trilho = document.getElementById('trilho')
 const body = document.querySelector('body')
 trilho.addEventListener('click', () => {
@@ -312,13 +298,11 @@ trilho.addEventListener('click', () => {
     body.classList.toggle('dark')
 })
 
-
 const perfil = document.getElementById('perfil')
 const popUpPerfil = document.getElementById('pop-up-perfil')
 const perfilPop = document.getElementById('perfil-pop')
 
 perfil.addEventListener('click', () => {
-
     popUpPerfil.classList.add('show');
 })
 
@@ -327,4 +311,3 @@ popUpPerfil.addEventListener('click', (evento) => {
         popUpPerfil.classList.remove('show');
     }
 })
-

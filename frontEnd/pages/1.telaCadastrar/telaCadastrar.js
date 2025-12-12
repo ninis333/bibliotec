@@ -1,12 +1,20 @@
-const API = "http://localhost:3000/alunos"
+const API = "http://localhost:3000/usuario";
 
 const botaoAcao = document.getElementById('btnCadastrar');
 const inputNome = document.getElementById("nome");
 const inputEmail = document.getElementById("email");
 const inputSenha = document.getElementById("senha");
 const inputConfirmarSenha = document.getElementById("confirmarSenha");
-const formCadastrar = document.getElementById("cadastroUsuario")
+const formCadastrar = document.getElementById("cadastroUsuario");
 
+// SweetAlert2 Toast
+const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+});
 
 function contemMaiuscula(senha) {
     return /[A-Z]/.test(senha);
@@ -15,9 +23,6 @@ function contemMinuscula(senha) {
     return /[a-z]/.test(senha);
 }
 
-
-
-
 async function salvar(e) {
     e.preventDefault();
     console.log("Salvando aluno");
@@ -25,16 +30,14 @@ async function salvar(e) {
     async function buscarDadosDoBanco() {
         try {
             const response = await fetch(API);
-            if (!response.ok) {
-                throw new Error('Erro na requisição à API');
-            }
+            if (!response.ok) throw new Error("Erro na requisição à API");
 
             const dados = await response.json();
-            console.log('Dados recebidos:', dados);
-            return dados; // retorna os dados para serem usados depois
+            console.log("Dados recebidos:", dados);
+            return dados;
 
         } catch (error) {
-            console.error('Erro ao buscar dados:', error);
+            console.error("Erro ao buscar dados:", error);
             return null;
         }
     }
@@ -47,85 +50,97 @@ async function salvar(e) {
     const alunos = await buscarDadosDoBanco();
 
     if (!alunos) {
-        alert("Erro ao conectar ao servidor. Tente novamente mais tarde.");
+        Toast.fire({ icon: "error", title: "Erro ao conectar ao servidor." });
         return;
     }
 
     if (!nome || !email || !senha || !confirmarSenha) {
-        alert("Por gentileza, preencha os campos obrigatórios (nome, email, senha e confirmarSenha).");
+        Toast.fire({ icon: "warning", title: "Preencha todos os campos obrigatórios!" });
         return;
     }
 
-    //verificando se o email ja existe no banco de dados
-    const verificarEmail = alunos.find(aluno => aluno.email === email)
+    // Email já registrado
+    const verificarEmail = alunos.find(aluno => aluno.email === email);
     if (verificarEmail) {
-        alert("Email ja cadastrado")
+        Toast.fire({ icon: "error", title: "Este email já está cadastrado." });
         return;
     }
 
-    //verifica o tamanho da senha, so passa com 8 caracteres ou mais
+    // Tamanho da senha
     if (senha.length < 8) {
-        alert("A senha deve ter pelo menos 8 caracteres")
+        Toast.fire({ icon: "warning", title: "A senha deve ter pelo menos 8 caracteres." });
         return;
     }
     if (senha.length > 128) {
-        alert("A senha não pode ter mais que 128 caracteres");
+        Toast.fire({ icon: "warning", title: "A senha não pode ter mais que 128 caracteres." });
         return;
     }
 
-    //verifica se contem letra minuscula e maiuscul
-
+    // Letra maiúscula/minúscula
     if (!contemMaiuscula(senha) || !contemMinuscula(senha)) {
-        alert("A senha deve conter pelo menos uma letra maiúscula e uma minúscula")
+        Toast.fire({ icon: "warning", title: "A senha deve ter letras maiúsculas e minúsculas." });
         return;
     }
 
-    //verifica se tem numero na senha
-    function contemNUmero(senha) {
-        return /[0-9]/.test(senha)
+    // Número
+    function contemNumero(senha) {
+        return /[0-9]/.test(senha);
     }
-    if (!contemNUmero(senha)) {
-        alert("A senha deve conter pelo menos um numeral arábico")
+    if (!contemNumero(senha)) {
+        Toast.fire({ icon: "warning", title: "A senha deve conter ao menos um número." });
         return;
     }
 
-    //verifica se tem espaço na senha
-    if (senha.includes(' ')) {
-        alert("A senha não pode conter espaços");
+    // Espaço
+    if (senha.includes(" ")) {
+        Toast.fire({ icon: "warning", title: "A senha não pode conter espaços." });
         return;
     }
 
-    //verificando se as senhas sao iguais
+    // Senhas iguais
     if (senha !== confirmarSenha) {
-        alert("As senhas não coincidem!");
+        Toast.fire({ icon: "error", title: "As senhas não coincidem!" });
         return;
     }
 
-    const novoAluno = { nome, email, senha }
+    const novoAluno = { nome, email, senha, curso_id: 1 };
     console.log("Enviando:", novoAluno);
 
     try {
         const requisicao = await fetch(API, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(novoAluno)
+            body: JSON.stringify(novoAluno),
         });
 
         if (requisicao.ok) {
             const dados = await requisicao.json();
             console.log("Aluno salvo com sucesso:", dados);
-            alert("Aluno cadastrado com sucesso!");
-            window.location.href = "./telaLogin.html";
+
+            Toast.fire({
+                icon: "success",
+                title: "Aluno cadastrado com sucesso!"
+            });
+
+            setTimeout(() => {
+                window.location.href = "./telaLogin.html";
+            }, 800);
+
             formCadastrar.reset();
         } else {
             console.error("Erro na requisição:", requisicao.status);
-            alert("Erro ao cadastrar aluno. Código: " + requisicao.status);
+            Toast.fire({
+                icon: "error",
+                title: "Erro ao cadastrar. Código: " + requisicao.status
+            });
         }
-
 
     } catch (error) {
         console.error("Erro no fetch:", error);
-        alert("Erro de conexão com o servidor.");
+        Toast.fire({
+            icon: "error",
+            title: "Erro de conexão com o servidor."
+        });
     }
 }
 
