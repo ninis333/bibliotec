@@ -1,6 +1,14 @@
-const buscarAlunos = "http://localhost:3000/usuario";
+const buscarAlunos = "http://localhost:3000/usuario/apenas-alunos";
 const conteiner = document.getElementById("perfilAluno");
 const listarAlunos = document.getElementById("listaAlunos");
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+});
+
 
 
 async function pegarAlunos() {

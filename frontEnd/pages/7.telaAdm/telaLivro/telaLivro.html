@@ -111,10 +111,16 @@
     </main>
 
 
-  
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["admin"]);
+  });
+</script>
     <script src="telaLivro.js"></script>
-
-
+    <script src="../../../js/voltarInicial.js"></script>
 </body>
 
 </html>

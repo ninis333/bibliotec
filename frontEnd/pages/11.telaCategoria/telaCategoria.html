@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Favoritos</title>
+    <title>Livros Categorizado</title>
     <link rel="icon" href="../../img/Group.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +17,7 @@
     </div>
 <body>
     <header class="cabecario">
-        <img class="imagemLogo" src="../../img/logo.png" alt="Logo">
+        <img class="imagemLogo" id="imagemLogo" src="../../img/logo.png" alt="Logo">
 
         <div class="pesquisar">
             <input class="inputCampo" id="inputPesquisarLivros" type="search" placeholder="Pesquisar..."
@@ -97,6 +97,14 @@
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["aluno"]);
+  });
+</script>
     <script src="telaCategoria.js"></script>
+    <script src="../../js/voltarInicial.js"></script>
 </body>
 </html>

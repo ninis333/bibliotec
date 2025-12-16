@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservados</title>
+    <title>Favoritos</title>
     <link rel="icon" href="../../img/Group.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,7 @@
 
 <body>
     <header class="cabecario">
-        <img id="botaoTelaInicial" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
+        <img id="imagemLogo" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
 
         <div class="pesquisar">
             <input class="inputCampo" id="inputPesquisarLivros" type="search" placeholder="Pesquisar..."
@@ -37,9 +37,7 @@
 
         </div>
     </header>
-        <div class="descricaoFiltro" id="tirarDescricao">
-        <div class="descricaoLivro" id="descricaoLivro"></div>
-    </div>
+    
     <div class="pop-up-perfil" id="pop-up-perfil">
         <div class="perfil-pop" id="perfil-pop">
             <div class="cabecarioPerfil">
@@ -89,7 +87,8 @@
         <div class="pop-up-filtro" id="pop-up-filtro">
             <div class="filtro-pop" id="filtro-pop">
                 <h2 class="tituloFiltro">Escolha o que deseja ver:</h2>
-                <div class="temas"> 
+                <div class="temas">
+                    
                     <input class="checkbox" type="checkbox" value="meusReservados"><p class="textoFiltro">Meus Reservados</p></input>
                     <input class="checkbox" type="checkbox" value="meusFavoritos"><p class="textoFiltro">Meus favoritos</p></input>
                     <input class="checkbox" type="checkbox" value="Romance"><p class="textoFiltro">Romance</p></input>
@@ -130,10 +129,19 @@
         </div>
     </main>
     
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["aluno"]);
+  });
+</script>
     <script src="/frontEnd/js/gFiltro.js"></script>
     <script src="/frontEnd/js/gperfil.js"></script>
     <script src="telaReservados.js"></script>
-
+    <script src="/frontEnd/js/voltarInicial.js"></script>
 </body>
+
+
 </html>

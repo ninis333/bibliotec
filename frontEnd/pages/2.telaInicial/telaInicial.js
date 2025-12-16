@@ -23,6 +23,7 @@ const APIListReservados = `http://localhost:3000/reserva/${idAluno}`;
 const aluno = JSON.parse(localStorage.getItem("aluno"));
 divNomePessoa.textContent = aluno.nome;
 
+
 async function buscarDadosDoBanco() {
   try {
     const response = await fetch(APILivros);
@@ -121,6 +122,7 @@ async function carregarLivros() {
   const favoritosResponse = await fetch(APIListFavoritos);
   const favoritos = await favoritosResponse.json();
 
+  montarCategoria("Academicos", "academico", dados, favoritos);
   montarCategoria("Mangas", "manga", dados, favoritos);
   montarCategoria("Romance", "romance", dados, favoritos);
   montarCategoria("Comédia", "comedia", dados, favoritos);
@@ -157,6 +159,9 @@ carregarLivros().then(() => {
   configurarCarrossel("Romance");
   configurarCarrossel("Suspense");
   configurarCarrossel("Terror");
+  configurarCarrossel("Academicos");
+  configurarCarrossel("Comédia");
+
 });
 
 // FAVORITAR
@@ -385,6 +390,7 @@ botaoFiltrar.addEventListener("click", () => {
     // 🔥 Esconde ou mostra a categoria inteira
     fade.previousElementSibling.style.display = algumVisivel ? "" : "none"; // h1
     fade.style.display = algumVisivel ? "" : "none";
+    popUpFiltro.classList.remove("show");
   });
 });
 

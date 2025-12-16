@@ -148,17 +148,23 @@
 
                         </div>
                     </div>
-
                     <div class="perfilAluno">
                         <h1 class="tituloPerfilAluno">Alunos Cadastrados</h1>
                         <div class="listaAlunos" id="listaAlunos">
 
                         </div>
                     </div>
-
                     </main>
-<script src="telaAlunos.js" defer></script>
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
 
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["admin"]);
+  });
+</script>
+<script src="telaAlunos.js" defer></script>
+<script src="../../../js/voltarInicial.js"></script>
 
 </body>
 

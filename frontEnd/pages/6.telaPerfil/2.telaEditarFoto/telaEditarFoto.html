@@ -16,7 +16,7 @@
 
 <body>
     <header class="cabecario">
-        <img id="botaoTelaInicial" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
+        <img id="imagemLogo" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
 
         <div class="icones">
             <div class="trilho" id="trilho">
@@ -130,11 +130,19 @@
   	 	</div>
   	 </div>
 </footer>
-  
-    <script src="/frontEnd/js/gFiltro.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["aluno"]);
+  });
+</script>
     <script src="telaEditarFoto.js"></script>
     <script src="../../../js/carregarFoto.js"></script>
+    <script src="../../../js/voltarInicial.js"></script>
+
 </body>
 
 

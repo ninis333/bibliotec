@@ -17,7 +17,7 @@
 
 <body>
     <header class="cabecario">
-        <img id="botaoTelaInicial" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
+        <img id="imagemLogo" class="imagemLogo" src="/frontEnd/img/logo.png" alt="Logo">
 
     </header>
 
@@ -47,10 +47,18 @@
             </div>
         </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script type="module">
 
+    import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      validarAcesso(["admin"]);
+    });
+</script>
     <script src="/frontEnd/js/gFiltro.js"></script>
-    <script src="/frontEnd/js/gperfil.js"></script>
     <script src="telaAdm.js"></script>
+    <script src="../../js/voltarInicial.js"></script>
 </body>
 
 

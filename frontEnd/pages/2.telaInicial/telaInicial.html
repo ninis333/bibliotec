@@ -18,7 +18,7 @@
     </div>
 <body>
     <header class="cabecario">
-        <img class="imagemLogo" src="../../img/logo.png" alt="Logo">
+        <img class="imagemLogo" id="imagemLogo" src="../../img/logo.png" alt="Logo">
 
         <div class="pesquisar">
             <input class="inputCampo" id="inputPesquisarLivros" type="search" placeholder="Pesquisar..."
@@ -83,6 +83,7 @@
                     <input class="checkbox" type="checkbox" value="terror"><p class="textoFiltro">Terror</p></input>
                     <input class="checkbox" type="checkbox" value="comedia"><p class="textoFiltro">Comédia</p></input>
                     <input class="checkbox" type="checkbox" value="suspense"><p class="textoFiltro">Suspense</p></input>
+                    <input class="checkbox" type="checkbox" value="academico"><p class="textoFiltro">Academico</p></input>
                     <!-- <input class="checkbox" type="checkbox" value="aventura"><p class="textoFiltro">Aventura</p></input> -->
                     <!-- <input class="checkbox" type="checkbox" value="Fantasia"><p class="textoFiltro">Fantasia</p></input>
                     <input class="checkbox" type="checkbox" value="FiccaoCientifica"><p class="textoFiltro">Ficção Científica</p></input>
@@ -112,10 +113,20 @@
             </div>
         </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["aluno"]);
+  });
+</script>
     <script src="telaInicial.js"></script>
     <script src="../../js/carregarFoto.js"></script>
+        <script src="../../js/voltarInicial.js"></script>
+
 </body>
 
 </html>

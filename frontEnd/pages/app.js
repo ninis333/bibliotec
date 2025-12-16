@@ -46,7 +46,8 @@ botaoAcao.addEventListener('click', async function (event) {
     }
 
     const perfil = dado.aluno.perfil;
-
+    
+    localStorage.setItem("token", dado.token);
     localStorage.setItem("aluno", JSON.stringify(dado.aluno));
     localStorage.setItem("id", dado.aluno.id);
 
@@ -54,13 +55,14 @@ botaoAcao.addEventListener('click', async function (event) {
       icon: "success",
       title: "Login realizado!"
     });
+    
 
     // Aguarda o Toast para redirecionar
     setTimeout(() => {
       if (perfil === "aluno") {
-        window.location.href = "2.telaInicial/telaInicial.html";
+        window.location.href = "/frontEnd/pages/2.telaInicial/telaInicial.html";
       } else {
-        window.location.href = "./telaTeste.html";
+        window.location.href = "/frontEnd/pages/7.telaAdm/telaAdm.html";
       }
     }, 500);
 

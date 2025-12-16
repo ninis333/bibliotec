@@ -66,6 +66,18 @@ export async function listarAlunos(req, res) {
   }
 };
 
+export async function listarApenasAlunos(req, res) {
+  try {
+    const [rows] = await db.execute(
+      `SELECT u.* FROM tabela_usuario u
+       JOIN tabela_login l ON u.id = l.aluno_id
+       WHERE l.perfil = 'aluno'`
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ erro: err.message });
+  }
+};
 
 export async function obterAlunos(req, res) {
   try {

@@ -15,7 +15,7 @@
 
 <body>
     <header class="cabecario">
-        <img class="imagemLogo" src="../../img/logo.png" alt="Logo">
+        <img class="imagemLogo" id="imagemLogo" src="../../img/logo.png" alt="Logo">
 
         <div class="pesquisar">
             <input class="inputCampo" id="inputPesquisarLivros" type="search" placeholder="Pesquisar..."
@@ -95,7 +95,16 @@
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+  import { validarAcesso } from "/frontEnd/js/globalAuth.js";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    validarAcesso(["aluno"]);
+  });
+</script>
     <script src="telaFavoritos.js"></script>
     <script src="../../js/gPerfil.js"></script>
+        <script src="../../js/voltarInicial.js"></script>
+
 </body>
 </html>
