@@ -1,5 +1,5 @@
 import e from "express";
-import { db } from "../config/db.js";
+import { getDb } from "../config/db.js";
 import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
@@ -21,7 +21,7 @@ export async function criarCodigoRecuperacao(req, res) {
     if (!email)
       return res.status(400).json({ erro: "Campo email é obrigatório" });
 
-    const [rows] = await db.execute(
+    const [rows] = await getDb().execute(
       "SELECT * FROM tabela_usuario WHERE email = ?",
       [email]
     );
@@ -119,7 +119,7 @@ export async function criarCodigoRecuperacao(req, res) {
       .toLocaleString("sv-SE", { hour12: false })
       .replace(",", "");
 
-    await db.execute(
+    await getDb().execute(
       "INSERT INTO tabela_verificacao (email, codigo, criado_em, expiracao, tipo) VALUES (?, ?, ?, ?, ?)",
       [email, codigo, agoraFormatada, expiracaoFormatada, 'recuperacao']
     );
@@ -137,7 +137,7 @@ export async function verificarCodigoRecuperacao(req, res) {
     if (!email || !codigo)
       return res.status(400).json({ erro: "Campos obrigatórios" });
 
-    const [rows] = await db.execute(
+    const [rows] = await getDb().execute(
       "SELECT * FROM tabela_verificacao WHERE email = ? AND codigo = ? AND tipo = ? ORDER BY criado_em DESC LIMIT 1",
       [email, codigo, 'recuperacao']
     );
@@ -153,7 +153,7 @@ export async function verificarCodigoRecuperacao(req, res) {
       return res.status(400).json({ erro: "Código expirado" });
     }
 
-    const [aluno] = await db.execute(
+    const [aluno] = await getDb().execute(
       "SELECT id FROM tabela_usuario WHERE email = ? LIMIT 1",
       [email]
     );
@@ -261,7 +261,7 @@ export async function criarCodigoCadastro(req, res) {
       .toLocaleString("sv-SE", { hour12: false })
       .replace(",", "");
 
-    await db.execute(
+    await getDb().execute(
       "INSERT INTO tabela_verificacao (email, codigo, criado_em, expiracao, tipo) VALUES (?, ?, ?, ?, ?)",
       [email, codigo, agoraFormatada, expiracaoFormatada, 'cadastro']
     );
@@ -282,7 +282,7 @@ export async function verificarCodigoCadastro(req, res) {
     }
 
     // Busca o código mais recente do tipo correto
-    const [rows] = await db.execute(
+    const [rows] = await getDb().execute(
       "SELECT * FROM tabela_verificacao WHERE email = ? AND codigo = ? AND tipo = ? ORDER BY criado_em DESC LIMIT 1",
       [email, codigo, "cadastro"]
     );
@@ -317,7 +317,7 @@ export async function limparCodigosAntigos() {
       .toLocaleString("sv-SE", { hour12: false })
       .replace(",", "");
 
-    await db.execute("DELETE FROM tabela_verificacao WHERE expiracao < ?", [
+    await getDb().execute("DELETE FROM tabela_verificacao WHERE expiracao < ?", [
       agoraFormatada,
     ]);
 
@@ -343,7 +343,7 @@ export async function atualizarSenha(req, res) {
     const hashedPassword = await bcrypt.hash(nova_senha, 10);
 
     // Atualizar no banco
-    await db.execute(
+    await getDb().execute(
       "UPDATE tabela_login SET senha = ? WHERE aluno_id = ?",
       [hashedPassword, aluno_id]
     );

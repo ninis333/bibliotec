@@ -4,6 +4,7 @@
   import express from "express";
   import bodyParser from "body-parser";
   import cors from "cors";
+  import { connectDatabase } from "./config/db.js";
   import usuarioRoutes from "./routes/aluno.routes.js"
   import livroRoutes from "./routes/livro.routes.js"
   import favoritosRoutes from "./routes/favoritos.routes.js"
@@ -34,5 +35,16 @@
   //  Inicia o servidor
   // ============================
   const PORT = 3000;
-  app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+  
+  async function start() {
+    try {
+      await connectDatabase();
+      app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
+    } catch (error) {
+      console.error("Erro ao iniciar servidor:", error);
+      process.exit(1);
+    }
+  }
+
+  start();
 

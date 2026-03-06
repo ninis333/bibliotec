@@ -1,4 +1,4 @@
-import { db } from "../config/db.js"
+import { getDb } from "../config/db.js"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
 
@@ -11,7 +11,7 @@ export async function login(req, res) {
   try {
     const { email, senha} = req.body;
 
-    const [alunoRows] = await db.execute(
+    const [alunoRows] = await getDb().execute(
       "SELECT id, nome, email FROM tabela_usuario WHERE email = ?",
       [email]
     );
@@ -22,7 +22,7 @@ export async function login(req, res) {
 
     const aluno = alunoRows[0];
 
-    const [loginRows] = await db.execute(
+    const [loginRows] = await getDb().execute(
       "SELECT senha, perfil FROM tabela_login WHERE aluno_id = ?",
       [aluno.id]
     )

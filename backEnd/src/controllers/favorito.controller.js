@@ -1,4 +1,4 @@
-import { db } from "../config/db.js"
+import { getDb } from "../config/db.js"
 
 
 
@@ -6,7 +6,7 @@ export async function obterLivrosFavs(req, res) {
   try {
     console.log("ID recebido:", req.params.id);
 
-    const [rows] = await db.execute(`
+    const [rows] = await getDb().execute(`
       SELECT 
         livro.id AS livro_id,
         livro.titulo,
@@ -29,7 +29,7 @@ export async function adicionarFavorito(req, res) {
   const { aluno_id, livro_id } = req.body;
 
   try {
-    await db.execute(
+    await getDb().execute(
       "INSERT INTO tabela_livros_favoritos (aluno_id, livro_id) VALUES (?, ?)",
       [aluno_id, livro_id]
     );
@@ -44,7 +44,7 @@ export async function removerFavorito(req, res) {
   const { aluno_id, livro_id } = req.body;
 
   try {
-    await db.execute(
+    await getDb().execute(
       "DELETE FROM tabela_livros_favoritos WHERE aluno_id = ? AND livro_id = ?",
       [aluno_id, livro_id]
     );

@@ -1,5 +1,5 @@
 
-import { db } from "../config/db.js"
+import { getDb } from "../config/db.js"
 import bcrypt from "bcrypt"
 // ============================
 //  Rotas CRUD
@@ -20,7 +20,7 @@ export async function criarAluno(req, res) {
     console.log("📦 Dados recebidos:", { nome, cpf, email, curso_id });
 
     // Verificar se o email já existe
-    const [emailExistente] = await db.execute(
+    const [emailExistente] = await getDb().execute(
       "SELECT id FROM tabela_usuario WHERE email = ?",
       [email]
     );
@@ -33,7 +33,7 @@ export async function criarAluno(req, res) {
     }
 
     // Inserir usuário
-    const [resultado] = await db.execute(
+    const [resultado] = await getDb().execute(
       "INSERT INTO tabela_usuario (nome, cpf, email, curso_id) VALUES (?, ?, ?, ?)",
       [nome, cpf, email, curso_id]
     );
@@ -42,7 +42,7 @@ export async function criarAluno(req, res) {
     const hashedPassword = await bcrypt.hash(senha, 10);
 
     // Inserir na tabela login
-    await db.execute(
+    await getDb().execute(
       "INSERT INTO tabela_login (aluno_id, senha) VALUES (?, ?)",
       [aluno_id, hashedPassword]
     );
@@ -59,7 +59,7 @@ export async function criarAluno(req, res) {
 
 export async function listarAlunos(req, res) {
   try {
-    const [rows] = await db.execute("SELECT * FROM tabela_usuario");
+    const [rows] = await getDb().execute("SELECT * FROM tabela_usuario");
     res.json(rows);
   } catch (err) {
     res.status(500).json({ erro: err.message });
@@ -68,7 +68,7 @@ export async function listarAlunos(req, res) {
 
 export async function listarApenasAlunos(req, res) {
   try {
-    const [rows] = await db.execute(
+    const [rows] = await getDb().execute(
       `SELECT u.* FROM tabela_usuario u
        JOIN tabela_login l ON u.id = l.aluno_id
        WHERE l.perfil = 'aluno'`
@@ -81,7 +81,7 @@ export async function listarApenasAlunos(req, res) {
 
 export async function obterAlunos(req, res) {
   try {
-    const [rows] = await db.execute("SELECT * FROM tabela_usuario WHERE id = ?", [
+    const [rows] = await getDb().execute("SELECT * FROM tabela_usuario WHERE id = ?", [
       req.params.id,
     ]);
     if (rows.length === 0)
@@ -95,7 +95,7 @@ export async function obterAlunos(req, res) {
 export async function atualizarAlunos(req, res) {
   try {
     const { nome, email, CPF, curso_id } = req.body;
-    await db.execute(
+    await getDb().execute(
       "UPDATE tabela_usuario SET nome = ?, email = ?, CPF = ?, curso_id = ? WHERE id = ?",
       [nome, email, CPF, curso_id, req.params.id]
     );
@@ -108,7 +108,7 @@ export async function atualizarAlunos(req, res) {
 
 export async function deletarAluno(req, res) {
   try {
-    await db.execute("DELETE FROM tabela_usuario WHERE id = ?", [req.params.id]);
+    await getDb().execute("DELETE FROM tabela_usuario WHERE id = ?", [req.params.id]);
     res.json({ mensagem: "Usuário deletado com sucesso!" });
   } catch (err) {
     res.status(500).json({ erro: err.message });
@@ -118,7 +118,7 @@ export async function deletarAluno(req, res) {
 export async function adicionarFotoPerfil(req, res) {
   try {
     const { aluno_id, foto_base64 } = req.body;
-    await db.execute(
+    await getDb().execute(
       "UPDATE tabela_usuario SET foto_perfil = ? WHERE id = ?",
       [foto_base64, aluno_id]
     );
@@ -131,7 +131,7 @@ export async function adicionarFotoPerfil(req, res) {
 export async function obterFotoPerfil(req, res) {
   try {
     const {id } = req.params;  
-    const [rows] = await db.execute(
+    const [rows] = await getDb().execute(
       "SELECT foto_perfil FROM tabela_usuario WHERE id = ?",
       [id]
     );
